@@ -8,7 +8,7 @@ ___
 - [ ] none / under development
 
 
-### Dependencies:
+### Main components:
 
     - Python 3.10.7
     - Django 4.1.1
