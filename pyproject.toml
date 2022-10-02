@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "ToDo List App"
+version = "0.1.0"
+description = "To do application based on Django 4.1.1"
+authors = ["Sergey Protsenko"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+Django = "^4.1.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
