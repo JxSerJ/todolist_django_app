@@ -13,20 +13,33 @@ ___
     - Python 3.10.7
     - Django 4.1.1
     - Poetry 1.2.1
+    - Postgresql (docker compose container, latest version)
 
 ###
-### How to:
+### How to launch:
 
-1. Under development
+1. Create and activate Python 3.10.7 virtual environment
+2. Install package manager Poetry:\
+   `pip intall poetry`
+3. Download and install project dependencies:\
+   `poetry install`
+4. Create docker compose container with postgresql db:\
+   `docker compose up --build -d`\
+    Project contains already prepopulated DB in `./database/` dir, but you can always create new one by deleting `./database/` folder.\
+    All env-data for db creation stores in `.env` file in project root dir
+5. If you use prepopulated project db **skip this step**.\
+   In case of creation of your own db you'll need to perform migrations:\
+   `python ./todolist/manage.py migrate`
+6. Launch server:\
+   `python ./todolist/manage.py runserver`
 
-[//]: # (1. Virtual environment creation)
+You can access django-admin panel from http://127.0.0.1:8000/admin/ 
 
-[//]: # (   - Python 3.10.7 must be installed and available in PATH env-var of your system. )
+Credentials for superuser are following (if you're using project db): 
 
-[//]: # (     See https://www.python.org/about/gettingstarted/ for instruction.)
+**Login**: `admin`\
+**Password**: `admin`
 
-[//]: # (   - Install python package "venv". `python3 -m pip install venv` )
 
-[//]: # (   - Create venv `python3 -m venv venv`)
 
-[//]: # (   - Activate venv `. /venv/bin/activate`)
+
