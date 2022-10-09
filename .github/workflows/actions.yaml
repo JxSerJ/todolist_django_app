@@ -47,7 +47,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
-          source: "deploy/docker-compose.yaml, .env"
+          source: "deploy/docker-compose.yaml, deploy/.env"
           target: "todolist_code"
           strip_components: 1
       - name: deploy app
