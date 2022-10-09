@@ -15,9 +15,62 @@ services:
     restart: always
     ports:
     - "${DB_PORT}:${DB_PORT}"
+    networks:
+      - backend_network
 
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
       interval: 5s
       timeout: 5s
       retries: 5
+
+  front:
+    image: sermalenk/skypro-front:lesson-34
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+      - api
+    networks:
+      - frontend_network
+
+  migrations:
+#    volumes:
+#      - .:/todolist_code/
+    build: ./todolist/.
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "tree && python manage.py migrate"
+    networks:
+      - backend_network
+
+  api:
+    build: ./todolist/.
+    env_file:
+      - .env
+#    volumes:
+#      - .:/todolist_code/
+    ports:
+      - "8000:8000"
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+    networks:
+      - backend_network
+      - frontend_network
+
+volumes:
+  postgres_data:
+#  .:
+
+networks:
+  backend_network:
+    driver: bridge
+  frontend_network:
+    driver: bridge
