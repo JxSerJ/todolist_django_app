@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    volumes:
+      - ./database/postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      PGPORT: ${DB_PORT}
+    restart: always
+    ports:
+    - "${DB_PORT}:${DB_PORT}"
+    networks:
+      - backend_network
+
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  front:
+    image: $DOCKER_FRONT_PROVIDER_USERNAME/$DOCKER_FRONT_IMAGE_NAME:$DOCKER_FRONT_IMAGE_TAG
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+      - api
+    networks:
+      - frontend_network
+
+  migrations:
+    image: $DOCKER_USERNAME/$API_NAME:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    volumes:
+      - ./.env:/todolist_code/.env
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "tree && python manage.py migrate"
+    networks:
+      - backend_network
+
+  api:
+    image: $DOCKER_USERNAME/$API_NAME:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./.env:/todolist_code/.env
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+      db:
+        condition: service_healthy
+    networks:
+      - backend_network
+      - frontend_network
+
+volumes:
+  postgres_data:
+#  .:
+
+networks:
+  backend_network:
+    driver: bridge
+  frontend_network:
+    driver: bridge
