@@ -27,8 +27,10 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - db
-      - api
+      db:
+        condition: service_healthy
+      api:
+        condition: service_started
     networks:
       - frontend_network
 
@@ -40,7 +42,7 @@ services:
       db:
         condition: service_healthy
     command: >
-      sh -c "ls -lah && tree && python manage.py migrate"
+      sh -c "ls -lah && ls -lah ../ && tree && python manage.py migrate"
     networks:
       - backend_network
 
