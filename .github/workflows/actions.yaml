@@ -15,7 +15,7 @@ jobs:
       - name: push image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.API_NAME }}:$GITHUB_REF_NAME-$GITHUB_RUN_ID
   deploy:
-    runs-om: ubuntu-22.04
+    runs-on: ubuntu-22.04
     needs: build_and_push
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
