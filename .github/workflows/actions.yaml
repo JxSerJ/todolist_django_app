@@ -59,4 +59,4 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           script: |
             cd todolist_code
-            echo ${{ secret.SERVER_PASSWORD }} | sudo -S docker compose up -d
+            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker compose up -d
