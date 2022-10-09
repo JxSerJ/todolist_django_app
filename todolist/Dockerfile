@@ -1,6 +1,6 @@
 FROM python:3.10-slim
 
-WORKDIR /todolist_code
+WORKDIR /todolist_code/todolist
 ENV PIP_NO_CACHE_DIR=1 \
     POETRY_VERSION=1.2.1
 

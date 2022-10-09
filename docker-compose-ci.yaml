@@ -42,7 +42,7 @@ services:
       db:
         condition: service_healthy
     command: >
-      sh -c "ls -lah && ls -lah ../ && tree && python manage.py migrate"
+      sh -c "ls -lah / && tree /todolist_code && python manage.py migrate"
     networks:
       - backend_network
 
