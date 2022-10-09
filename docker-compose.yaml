@@ -29,8 +29,10 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - db
-      - api
+      db:
+        condition: service_healthy
+      api:
+        condition: service_started
     networks:
       - frontend_network
 
