@@ -25,7 +25,7 @@ services:
   front:
     image: $DOCKER_FRONT_PROVIDER_USERNAME/$DOCKER_FRONT_IMAGE_NAME:$DOCKER_FRONT_IMAGE_TAG
     ports:
-      - "8080:80"
+      - "80:80"
     depends_on:
       db:
         condition: service_healthy
