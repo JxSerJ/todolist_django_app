@@ -12,7 +12,7 @@ services:
       PGPORT: 5432
     restart: always
     ports:
-    - "${DB_PORT}:5432"
+    - "5432:${DB_PORT}"
     networks:
       - backend_network
 
