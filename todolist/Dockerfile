@@ -4,7 +4,7 @@ WORKDIR /todolist_code/todolist
 ENV PIP_NO_CACHE_DIR=1 \
     POETRY_VERSION=1.2.1
 
-RUN apt update && apt full-upgrade -y && apt install gunicorn && apt autoremove -y
+RUN apt update && apt full-upgrade -y && apt install gunicorn -y && apt autoremove -y
 
 RUN pip install -U pip setuptools
 
