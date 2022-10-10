@@ -9,10 +9,10 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
-      PGPORT: ${DB_PORT}
+      PGPORT: ${DB_CONTAINER_PORT}
     restart: always
     ports:
-    - "${DB_PORT}:${DB_PORT}"
+    - "${DB_HOST_PORT}:${DB_CONTAINER_PORT}"
     networks:
       - backend_network
 
