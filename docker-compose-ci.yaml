@@ -9,12 +9,10 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
-      PGPORT: 5432
+      PGPORT: ${DB_PORT}
     restart: always
-    expose:
-      - "${DB_PORT}"
     ports:
-    - "${DB_PORT}:5432"
+    - "${DB_PORT}:${DB_PORT}"
     networks:
       - backend_network
 

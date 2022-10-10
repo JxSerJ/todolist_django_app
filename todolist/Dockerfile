@@ -21,5 +21,7 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-#CMD ["gunicorn", "todolist.wsgi:application", "--bind", "0.0.0.0:8000", "--log-level", "info", "--workers", "4"]  # not working, idk why
+#CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+# not working, idk why
+CMD ["gunicorn", "todolist.wsgi:application", "--bind", "0.0.0.0:8000", "--log-level", "info", "--workers", "4"]
