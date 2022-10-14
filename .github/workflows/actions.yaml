@@ -60,4 +60,6 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           script: |
             cd todolist_code
+            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker compose down --rmi all --volumes
+            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker system prune --all -v -f
             echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker compose up -d
