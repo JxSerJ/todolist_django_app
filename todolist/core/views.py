@@ -1,11 +1,13 @@
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render
+from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import status
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import User
-from .serializers import SignUpSerializer, LoginSerializer
+from .serializers import SignUpSerializer, LoginSerializer, RetrieveUpdateSerializer
 
 
 class SignUpView(CreateAPIView):
@@ -28,6 +30,15 @@ class LoginView(CreateAPIView):
 
         if user is not None:
             login(request, user)
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+            return Response(status=status.HTTP_201_CREATED, data=serializer.data)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'password': ['Incorrect password']})
+
+class RetrieveUpdateView(RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = RetrieveUpdateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+

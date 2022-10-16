@@ -45,7 +45,7 @@ class SignUpSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'first_name', 'last_name', 'email', 'password']
 
 
-class LoginSerializer(serializers.Serializer):
+class LoginSerializer(serializers.ModelSerializer):
     username = serializers.CharField(required=True, min_length=1)
     password = serializers.CharField(required=True, min_length=1)
 
@@ -58,3 +58,30 @@ class LoginSerializer(serializers.Serializer):
 
     class Meta:
         model = User
+        fields = ['username', 'password']
+
+
+class RetrieveUpdateSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(required=False, read_only=True)
+    username = serializers.RegexField(regex='^[\w.@+-]+$', required=False, max_length=150, min_length=1,
+                                      allow_null=False, allow_blank=False)
+    first_name = serializers.CharField(required=False, max_length=150, allow_blank=True)
+    last_name = serializers.CharField(required=False, max_length=150, allow_blank=True)
+    email = serializers.EmailField(required=False, allow_blank=True)
+
+    def validate_username(self, username):
+        request = self.context.get('request', None)
+        if request:
+            current_user = request.user
+        else:
+            raise serializers.ValidationError({'username': ['Login error']})
+
+        """Validate username existence"""
+        if self.Meta.model.objects.filter(username=username).exists() and current_user.username != username:
+            raise serializers.ValidationError(f'User "{username}" already exists')
+        else:
+            return username
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name', 'email']
