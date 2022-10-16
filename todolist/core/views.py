@@ -2,12 +2,12 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import status
-from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import User
-from .serializers import SignUpSerializer, LoginSerializer, RetrieveUpdateSerializer
+from .serializers import SignUpSerializer, LoginSerializer, RetrieveUpdateSerializer, PasswordUpdateSerializer
 
 
 class SignUpView(CreateAPIView):
@@ -46,3 +46,22 @@ class RetrieveUpdateView(RetrieveUpdateDestroyAPIView):
     def delete(self, request, *args, **kwargs):
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class PasswordUpdateView(UpdateAPIView):
+    serializer_class = PasswordUpdateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def update(self, request, *args, **kwargs):
+
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_200_OK, data={'old_password': serializer.data.get('old_password'),
+                                                             'new_password': serializer.data.get('new_password')})
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)

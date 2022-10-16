@@ -85,3 +85,31 @@ class RetrieveUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'first_name', 'last_name', 'email']
+
+
+class PasswordUpdateSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError("Incorrect password")
+        return value
+
+    def validate_new_password(self, value):
+        validate_password(value)
+        return value
+
+    def validate(self, data):
+        if data['old_password'] == data['new_password']:
+            raise serializers.ValidationError({'old_password': ['Passwords can not match'],
+                                               'new_password': ['Passwords can not match']})
+        return data
+
+    def save(self, **kwargs):
+        password = self.validated_data['new_password']
+        user = self.context['request'].user
+        user.set_password(password)
+        user.save()
+        return user
