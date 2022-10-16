@@ -3,4 +3,10 @@
 */__pycache__/*
 *.py[cod]
 *$py.class
+swagger-bot/
+/database/
+.env
+docker-compose-data-migration.yaml
+docker-compose.yaml
+swagger-bot/
 
