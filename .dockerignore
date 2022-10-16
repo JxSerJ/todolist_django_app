@@ -6,7 +6,9 @@
 swagger-bot/
 /database/
 .env
+local.env
 docker-compose-data-migration.yaml
 docker-compose.yaml
+docker-compose-db-only.yaml
 swagger-bot/
 
