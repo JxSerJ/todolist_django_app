@@ -28,8 +28,6 @@ class LoginView(CreateAPIView):
 
         if user is not None:
             login(request, user)
-            return Response(status=status.HTTP_201_CREATED)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'password': ['Incorrect password']})
-
-
