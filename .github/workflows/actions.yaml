@@ -36,6 +36,8 @@ jobs:
       DEBUG: ${{ secrets.DEBUG }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
       ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+      VK_OAUTH2_KEY: ${{ secrets.VK_OAUTH2_KEY }}
+      VK_OAUTH2_SECRET: ${{ secrets.VK_OAUTH2_SECRET }}
     steps:
       - name: checkout
         uses: actions/checkout@v3
