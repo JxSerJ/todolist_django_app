@@ -1,8 +1,8 @@
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import status
-from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -34,7 +34,8 @@ class LoginView(CreateAPIView):
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'password': ['Incorrect password']})
 
-class RetrieveUpdateView(RetrieveUpdateAPIView):
+
+class RetrieveUpdateView(RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
     serializer_class = RetrieveUpdateSerializer
     permission_classes = [IsAuthenticated]
@@ -42,3 +43,6 @@ class RetrieveUpdateView(RetrieveUpdateAPIView):
     def get_object(self):
         return self.request.user
 
+    def delete(self, request, *args, **kwargs):
+        logout(request)
+        return Response(status=status.HTTP_204_NO_CONTENT)
