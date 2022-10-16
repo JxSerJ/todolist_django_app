@@ -2,7 +2,7 @@ name: Build and deploy
 on:
   push:
     branches:
-      - main
+      - deploy
 jobs:
   build_and_push:
     runs-on: ubuntu-22.04
