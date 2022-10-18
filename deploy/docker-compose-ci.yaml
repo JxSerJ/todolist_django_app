@@ -49,7 +49,7 @@ services:
   api:
     image: $DOCKER_USERNAME/$API_NAME:$GITHUB_REF_NAME-$GITHUB_RUN_ID
     ports:
-      - "8000:8000"
+      - "8000"
     volumes:
       - ./.env:/todolist_code/.env
     depends_on:
