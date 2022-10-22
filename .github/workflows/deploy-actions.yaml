@@ -12,7 +12,6 @@ jobs:
       && contains(github.event.head_commit.message, 'Deploy')
     runs-on: main-linux
     name: Deploy
-    needs: build_and_push
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       API_NAME: ${{ secrets.API_NAME }}
