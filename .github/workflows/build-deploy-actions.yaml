@@ -86,8 +86,8 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
-#          source: "deploy/docker-compose.yaml, deploy/.env, deploy/nginx.conf"
-          source: "deploy/*"
+          source: "deploy/docker-compose.yaml, deploy/.env, deploy/nginx.conf"
+#          source: "deploy/*"
           target: "todolist_code"
           strip_components: 1
       - name: Deploy app
