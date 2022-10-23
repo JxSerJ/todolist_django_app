@@ -57,7 +57,8 @@ class LoginSerializer(serializers.ModelSerializer):
 
     def validate_username(self, username):
         """Validate username existence"""
-        if not self.Meta.model.objects.filter(username=username).exists():
+        user = self.Meta.model.objects.filter(username=username)
+        if not user.exists():
             raise serializers.ValidationError(f'User "{username}" does not exist')
         else:
             return username
