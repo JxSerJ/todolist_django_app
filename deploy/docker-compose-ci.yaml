@@ -26,6 +26,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./static/:/opt/static/
     depends_on:
       db:
         condition: service_healthy

@@ -71,6 +71,7 @@ jobs:
       ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
       VK_OAUTH2_KEY: ${{ secrets.VK_OAUTH2_KEY }}
       VK_OAUTH2_SECRET: ${{ secrets.VK_OAUTH2_SECRET }}
+      VK_OAUTH2_SCOPE: ${{ secrets.VK_OAUTH2_SCOPE }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -86,7 +87,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
-          source: "deploy/docker-compose.yaml, deploy/.env, deploy/nginx.conf"
+          source: "deploy/docker-compose.yaml, deploy/.env, deploy/nginx.conf, static"
           target: "todolist_code"
           strip_components: 1
       - name: Deploy app

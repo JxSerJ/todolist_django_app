@@ -3,7 +3,8 @@ FROM python:3.10-slim
 WORKDIR /todolist_code/todolist
 ENV PIP_NO_CACHE_DIR=1 \
     POETRY_VERSION=1.2.1 \
-    PYTHON_PATH=/todolist_code/todolist
+    PYTHON_PATH=/todolist_code/todolist \
+    PYTHONUNBUFFERED=1
 
 RUN apt update && apt full-upgrade -y && apt autoremove -y  # && apt install gunicorn -y
 
@@ -25,4 +26,5 @@ EXPOSE 8000
 #CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
 # not working, idk why
-CMD ["gunicorn", "todolist.wsgi:application", "--bind", "0.0.0.0:8000", "--log-level", "info", "--workers", "4"]
+CMD ["gunicorn", "todolist.wsgi:application", "--bind", "0.0.0.0:8000", "--log-level", "debug", "--capture-output", \
+         "--enable-stdio-inheritance", "--workers", "4", "--access-logfile", "gunicorn.log"]
