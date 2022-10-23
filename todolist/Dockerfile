@@ -25,6 +25,8 @@ EXPOSE 8000
 
 #CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
 
+#ENTRYPOINT ["bash", "entrypoint.sh"]
+
 # not working, idk why
 CMD ["gunicorn", "todolist.wsgi:application", "--bind", "0.0.0.0:8000", "--log-level", "debug", "--capture-output", \
          "--enable-stdio-inheritance", "--workers", "4", "--access-logfile", "gunicorn.log"]

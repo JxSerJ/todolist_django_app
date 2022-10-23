@@ -78,6 +78,7 @@ jobs:
       - name: Render configs
         run: |
           cd deploy
+          mkdir static
           cat docker-compose-ci.yaml | envsubst > docker-compose.yaml
           cat ci.env | envsubst > .env
       - name: Copy file via ssh-session
@@ -87,7 +88,7 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
-          source: "deploy/docker-compose.yaml, deploy/.env, deploy/nginx.conf, static/*"
+          source: "deploy/docker-compose.yaml, deploy/.env, deploy/nginx.conf"
           target: "todolist_code"
           strip_components: 1
       - name: Deploy app
