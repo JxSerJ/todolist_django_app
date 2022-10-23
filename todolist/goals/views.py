@@ -1,17 +1,21 @@
+from django.db.models import Q
 from django.shortcuts import render
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveUpdateDestroyAPIView, RetrieveUpdateAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
 
-from goals.models import GoalCategory
-from goals.serializers import GoalCreateSerializer, GoalCategorySerializer
+from goals.filters import GoalDateFilter
+from goals.models import GoalCategory, Goal
+from goals.permissions import IsOwner
+from goals.serializers import GoalCategoryCreateSerializer, GoalCategorySerializer, GoalCreateSerializer, GoalSerializer
 
 
 class GoalCategoryCreateView(CreateAPIView):
     model = GoalCategory
     permission_classes = [IsAuthenticated]
-    serializer_class = GoalCreateSerializer
+    serializer_class = GoalCategoryCreateSerializer
 
 
 class GoalCategoryListView(ListAPIView):
@@ -46,3 +50,36 @@ class GoalCategoryView(RetrieveUpdateDestroyAPIView):
         instance.is_deleted = True
         instance.save()
         return instance
+
+
+class GoalCreateView(CreateAPIView):
+    model = Goal
+    permission_classes = [IsAuthenticated]
+    serializer_class = GoalCreateSerializer
+
+
+class GoalListView(ListAPIView):
+    model = Goal
+    permission_classes = [IsAuthenticated]
+    serializer_class = GoalSerializer
+    filterset_class = GoalDateFilter
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    ordering_fields = ['title', 'created']
+    ordering = ['title']
+    search_fields = ['title', 'description']
+
+    def get_queryset(self):
+        return Goal.objects.filter(
+            Q(user_id=self.request.user.id) & ~Q(status=Goal.Status.archived) & Q(category__is_deleted=False)
+        )
+
+
+class GoalView(RetrieveUpdateAPIView):
+    model = Goal
+    permission_classes = [IsAuthenticated]  # IsOwner
+    serializer_class = GoalSerializer
+
+    def get_queryset(self):
+        return Goal.objects.filter(
+            Q(user_id=self.request.user.id) & ~Q(status=Goal.Status.archived) & Q(category__is_deleted=False)
+        )
