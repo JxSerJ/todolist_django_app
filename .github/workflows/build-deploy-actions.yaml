@@ -7,7 +7,7 @@ on:
 
 jobs:
   build_and_push:
-#    if: "contains(github.event.head_commit.message, 'Build')"
+    if: !contains(github.event.head_commit.message, 'deploy-only')
     name: Build and push
     runs-on: main-linux
 
@@ -50,7 +50,8 @@ jobs:
     needs: build_and_push
     if: |
       always() &&
-      (needs.event.build_and_push.result == 'success' || needs.event.build_and_push.result == 'skipped')
+        ((needs.build_and_push.result == 'success' || needs.build_and_push.result == 'skipped') ||
+        contains(github.ref_name, 'deploy-only'))
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       API_NAME: ${{ secrets.API_NAME }}
