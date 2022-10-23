@@ -52,7 +52,7 @@ jobs:
     if: |
       always() &&
         ((needs.build_and_push.result == 'success' || needs.build_and_push.result == 'skipped') ||
-        (needs.build_and_push.result == 'skipped' & contains(github.ref_name, 'deploy-only')))
+        (needs.build_and_push.result == 'skipped' && contains(github.ref_name, 'deploy-only')))
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       API_NAME: ${{ secrets.API_NAME }}
