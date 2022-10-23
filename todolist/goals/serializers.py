@@ -1,7 +1,7 @@
 from rest_framework import serializers, exceptions
 
 from core.serializers import UserSerializer
-from goals.models import GoalCategory, Goal
+from goals.models import GoalCategory, Goal, GoalComment
 
 
 class GoalCategoryCreateSerializer(serializers.ModelSerializer):
@@ -49,7 +49,34 @@ class GoalSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['id', 'created', 'updated', 'user']
 
-    def validate_category(self, value: GoalCategory):
+    def validate_category(self, value):
         if self.context['request'].user.id != value.user_id:
             raise exceptions.PermissionDenied
         return value
+
+
+class GoalCommentCreateSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    goal = serializers.PrimaryKeyRelatedField(
+        queryset=Goal.objects.all()
+    )
+
+    class Meta:
+        model = GoalComment
+        fields = '__all__'
+        read_only_fields = ['id', 'created', 'updated', 'user']
+
+    def validate_goal(self, value):
+        if value.user != self.context['request'].user:
+            # raise serializers.ValidationError("not owner of goal")
+            raise exceptions.PermissionDenied
+        return value
+
+
+class GoalCommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = GoalComment
+        fields = '__all__'
+        read_only_fields = ['id', 'created', 'updated', 'user', 'goal']
