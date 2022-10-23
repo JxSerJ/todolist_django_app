@@ -51,7 +51,7 @@ jobs:
     needs: build_and_push
     if: |
       always() &&
-        ((needs.build_and_push.result == 'success' || needs.build_and_push.result == 'skipped') ||
+        ((needs.build_and_push.result == 'success') ||
         (needs.build_and_push.result == 'skipped' && contains(github.ref_name, 'deploy-only')))
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
@@ -87,7 +87,6 @@ jobs:
           password: ${{ secrets.SERVER_PASSWORD }}
           port: ${{ secrets.SERVER_PORT }}
           source: "deploy/docker-compose.yaml, deploy/.env, deploy/nginx.conf"
-#          source: "deploy/*"
           target: "todolist_code"
           strip_components: 1
       - name: Deploy app
