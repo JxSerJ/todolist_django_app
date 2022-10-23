@@ -49,7 +49,7 @@ jobs:
     name: Deploy
     needs: build_and_push
     if: |
-      always() $$
+      always() &&
       (needs.event.build_and_push.result == 'success' || needs.event.build_and_push.result == 'skipped')
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
