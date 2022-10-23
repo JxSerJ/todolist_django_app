@@ -78,7 +78,6 @@ jobs:
       - name: Render configs
         run: |
           cd deploy
-          mkdir static
           cat docker-compose-ci.yaml | envsubst > docker-compose.yaml
           cat ci.env | envsubst > .env
       - name: Copy file via ssh-session

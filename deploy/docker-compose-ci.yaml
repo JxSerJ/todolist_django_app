@@ -51,7 +51,7 @@ services:
     image: $DOCKER_USERNAME/$API_NAME:latest
     volumes:
       - ./.env:/todolist_code/.env
-      - ./static/:/todolist_code/todolist/static
+      - ./static/:/todolist_code/todolist/static/
     depends_on:
       migrations:
         condition: service_completed_successfully
