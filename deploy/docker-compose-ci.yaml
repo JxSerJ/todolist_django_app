@@ -37,7 +37,7 @@ services:
       - frontend_network
 
   migrations:
-    image: $DOCKER_USERNAME/$API_NAME:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    image: $DOCKER_USERNAME/$API_NAME:latest
     volumes:
       - ./.env:/todolist_code/.env
     depends_on:
@@ -49,7 +49,7 @@ services:
       - backend_network
 
   api:
-    image: $DOCKER_USERNAME/$API_NAME:$GITHUB_REF_NAME-$GITHUB_RUN_ID
+    image: $DOCKER_USERNAME/$API_NAME:latest
 #    ports:
 #      - "8000"
     volumes:

@@ -1,9 +1,9 @@
 name: Build and deploy
 on:
   push:
-    branches: [deploy, test]
     tags:
       - 'v*'
+#    branches: [deploy, test]
 
 jobs:
   build_and_push:
@@ -48,9 +48,9 @@ jobs:
     runs-on: main-linux
     name: Deploy
     needs: build_and_push
-#    if: |
-#      always() $$
-#      (needs.event.build_and_push.result == 'success' || needs.event.build_and_push.result == 'skipped')
+    if: |
+      always() $$
+      (needs.event.build_and_push.result == 'success' || needs.event.build_and_push.result == 'skipped')
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       API_NAME: ${{ secrets.API_NAME }}
