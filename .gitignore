@@ -168,3 +168,4 @@ docker-compose.yaml
 docker-compose-db-only.yaml
 swagger-bot/
 vk_data.txt
+/todolist/static

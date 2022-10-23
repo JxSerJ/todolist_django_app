@@ -5,7 +5,7 @@ ___
 
 ### Main components:
 
-- ```Python 3.10.7```
+- ```Python 3.10.8```
 - ```Django 4.1.2```
 - ```Poetry 1.2.1```
 - ```Postgresql v15```
@@ -26,6 +26,7 @@ ___
 ### How to launch locally:
 
 You can't :)
+This functionality will be added after project finalization and release.
 
 [//]: # (1. Create and activate Python 3.10.7 virtual environment)
 
