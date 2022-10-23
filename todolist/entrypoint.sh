@@ -1,3 +1,4 @@
 #!/bin/bash
 
-python manage.py collectstatic --no-input -v 3
+python manage.py collectstatic --no-input -v 1
+exec "$@"
