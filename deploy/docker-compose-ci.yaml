@@ -11,8 +11,6 @@ services:
       POSTGRES_DB: ${DB_NAME}
       PGPORT: ${DB_CONTAINER_PORT}
     restart: always
-#    ports:
-#    - "${DB_HOST_PORT}:${DB_CONTAINER_PORT}"
     networks:
       - backend_network
 
@@ -27,7 +25,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       db:
         condition: service_healthy
@@ -50,8 +48,6 @@ services:
 
   api:
     image: $DOCKER_USERNAME/$API_NAME:latest
-#    ports:
-#      - "8000"
     volumes:
       - ./.env:/todolist_code/.env
     depends_on:
