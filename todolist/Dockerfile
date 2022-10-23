@@ -2,7 +2,8 @@ FROM python:3.10-slim
 
 WORKDIR /todolist_code/todolist
 ENV PIP_NO_CACHE_DIR=1 \
-    POETRY_VERSION=1.2.1
+    POETRY_VERSION=1.2.1 \
+    PYTHON_PATH=/todolist_code/todolist
 
 RUN apt update && apt full-upgrade -y && apt autoremove -y  # && apt install gunicorn -y
 
