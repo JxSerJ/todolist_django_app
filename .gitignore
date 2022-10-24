@@ -170,3 +170,4 @@ swagger-bot/
 vk_data.txt
 /todolist/static
 /nginx.conf
+db/

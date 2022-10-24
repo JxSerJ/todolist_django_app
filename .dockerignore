@@ -13,3 +13,4 @@ docker-compose-db-only.yaml
 swagger-bot/
 vk_data.txt
 /nginx.conf
+db/

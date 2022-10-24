@@ -100,7 +100,7 @@ jobs:
           script: |
             cd todolist_code
             docker compose down --rmi all --volumes
-            docker system prune --all -v -f
+            docker system prune --all --volumes -f
             docker compose up -d
 #            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker compose down --rmi all --volumes
 #            echo ${{ secrets.SERVER_PASSWORD }} | sudo -S docker system prune --all -v -f
