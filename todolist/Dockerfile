@@ -29,5 +29,4 @@ ENTRYPOINT ["bash", "entrypoint.sh"]
 CMD ["gunicorn", "todolist.wsgi:application", "--bind", "0.0.0.0:8000", \
         "--log-level", "debug", "--capture-output", \
         "--enable-stdio-inheritance", "--workers", "4", \
-        "--access-logfile", "gunicorn-access.log", "--error-logfile", "gunicorn.log", \
-        "--spew"]
+        "--access-logfile", "gunicorn-access.log", "--error-logfile", "gunicorn.log"]
