@@ -66,8 +66,8 @@ class GoalListView(ListAPIView):
     filterset_class = GoalDateFilter
     pagination_class = LimitOffsetPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    ordering_fields = ['title', 'created']
-    ordering = ['title']
+    ordering_fields = ['title', 'created', 'due_date']
+    ordering = ['title', '']
     search_fields = ['title', 'description']
 
     def get_queryset(self):
