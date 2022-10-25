@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
       PGPORT: ${DB_CONTAINER_PORT}
-    restart: always
+    restart: on-failure
     networks:
       - backend_network
 
