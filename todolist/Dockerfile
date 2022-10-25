@@ -1,6 +1,11 @@
 FROM python:3.10-slim
 
 WORKDIR /todolist_code/todolist
+
+EXPOSE 8000
+
+RUN groupadd --system service && useradd --system -g service api
+
 ENV PIP_NO_CACHE_DIR=1 \
     POETRY_VERSION=1.2.1 \
     PYTHON_PATH=/todolist_code/todolist \
@@ -15,13 +20,13 @@ RUN pip install -U pip setuptools
 #RUN pip install -r requirements.txt
 
 # Dependencies installation with poetry
-COPY poetry.lock pyproject.toml ./
 RUN pip install "poetry==$POETRY_VERSION" -v
-RUN POETRY_VIRTUALENVS_CREATE=false poetry install -v
+COPY poetry.lock pyproject.toml ./
+RUN POETRY_VIRTUALENVS_CREATE=false poetry install --no-interaction --without dev --no-root -v
 
 COPY . .
 
-EXPOSE 8000
+USER api
 
 ENTRYPOINT ["bash", "entrypoint.sh"]
 
