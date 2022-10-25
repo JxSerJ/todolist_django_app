@@ -4,7 +4,7 @@ WORKDIR /todolist_code/todolist
 
 EXPOSE 8000
 
-RUN groupadd --system service && useradd --system -g service api
+#RUN groupadd --system service && useradd --system -g service api
 
 ENV PIP_NO_CACHE_DIR=1 \
     POETRY_VERSION=1.2.1 \
@@ -26,7 +26,7 @@ RUN POETRY_VIRTUALENVS_CREATE=false poetry install --no-interaction --without de
 
 COPY . .
 
-USER api
+#USER api
 
 ENTRYPOINT ["bash", "entrypoint.sh"]
 
