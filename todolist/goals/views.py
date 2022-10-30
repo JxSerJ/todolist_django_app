@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from goals.filters import GoalDateFilter
 from goals.models import GoalCategory, Goal, GoalComment, Board
-from goals.permissions import IsOwner, BoardPermissions
+from goals.permissions import IsOwner, BoardPermissions, GoalCategoryPermissions
 from goals.serializers import GoalCategoryCreateSerializer, GoalCategorySerializer, GoalCreateSerializer, \
     GoalSerializer, GoalCommentCreateSerializer, GoalCommentSerializer, BoardCreateSerializer, BoardSerializer, \
     BoardListSerializer
@@ -48,8 +48,8 @@ class BoardListView(ListAPIView):
     filter_backends = [
         filters.OrderingFilter,
     ]
-    ordering_fields = ["title"]
-    ordering = ["title"]
+    ordering_fields = ['title']
+    ordering = ['title']
 
     def get_queryset(self):
         return Board.objects.filter(
@@ -69,13 +69,15 @@ class GoalCategoryListView(ListAPIView):
     serializer_class = GoalCategorySerializer
     pagination_class = LimitOffsetPagination
     filter_backends = [
+        DjangoFilterBackend,
         filters.OrderingFilter,
         filters.SearchFilter,
     ]
 
-    ordering_fields = ["title", "created"]
-    ordering = ["title"]
-    search_fields = ["title"]
+    filterset_fields = ['board']
+    ordering_fields = ['title', 'created']
+    ordering = ['title']
+    search_fields = ['title']
 
     def get_queryset(self):
         return GoalCategory.objects.filter(
@@ -86,14 +88,15 @@ class GoalCategoryListView(ListAPIView):
 class GoalCategoryView(RetrieveUpdateDestroyAPIView):
     model = GoalCategory
     serializer_class = GoalCategorySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, GoalCategoryPermissions]
 
     def get_queryset(self):
-        return GoalCategory.objects.filter(user=self.request.user, is_deleted=False)
+        return GoalCategory.objects.filter(board__participants__user=self.request.user, is_deleted=False)
 
     def perform_destroy(self, instance):
         instance.is_deleted = True
         instance.save()
+        Goal.objects.filter(category=instance).update(status=Goal.Status.archived)
         return instance
 
 

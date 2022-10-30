@@ -76,8 +76,20 @@ class GoalCategoryCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GoalCategory
-        read_only_fields = ['id', 'created', 'updated', 'user', 'is_deleted']
+        read_only_fields = ['id', 'created', 'updated', 'user', 'is_deleted', 'board']
         fields = '__all__'
+
+    def validate_board(self, value):
+        if value.is_deleted:
+            raise serializers.ValidationError("not allowed for deleted board")
+        allow = BoardParticipant.objects.filter(
+            board=value,
+            role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
+            user=self.context["request"].user,
+        ).exists()
+        if not allow:
+            raise serializers.ValidationError("must be owner or writer of the board")
+        return value
 
 
 class GoalCategorySerializer(serializers.ModelSerializer):
@@ -86,7 +98,7 @@ class GoalCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = GoalCategory
         fields = '__all__'
-        read_only_fields = ['id', 'created', 'updated', 'user']
+        read_only_fields = ['id', 'created', 'updated', 'user', 'board']
 
 
 class GoalCreateSerializer(serializers.ModelSerializer):
