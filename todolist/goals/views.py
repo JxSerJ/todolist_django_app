@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from goals.filters import GoalDateFilter
 from goals.models import GoalCategory, Goal, GoalComment, Board
-from goals.permissions import IsOwner, BoardPermissions, GoalCategoryPermissions
+from goals.permissions import IsOwner, BoardPermissions, GoalCategoryPermissions, GoalPermissions
 from goals.serializers import GoalCategoryCreateSerializer, GoalCategorySerializer, GoalCreateSerializer, \
     GoalSerializer, GoalCommentCreateSerializer, GoalCommentSerializer, BoardCreateSerializer, BoardSerializer, \
     BoardListSerializer
@@ -120,18 +120,25 @@ class GoalListView(ListAPIView):
     def get_queryset(self):
         return Goal.objects.filter(
             Q(user_id=self.request.user.id) & ~Q(status=Goal.Status.archived) & Q(category__is_deleted=False)
+            & Q(category__board__participants=self.request.user)
         )
 
 
-class GoalView(RetrieveUpdateAPIView):
+class GoalView(RetrieveUpdateDestroyAPIView):
     model = Goal
-    permission_classes = [IsAuthenticated]  # IsOwner
+    permission_classes = [IsAuthenticated, GoalPermissions]  # IsOwner
     serializer_class = GoalSerializer
 
     def get_queryset(self):
         return Goal.objects.filter(
             Q(user_id=self.request.user.id) & ~Q(status=Goal.Status.archived) & Q(category__is_deleted=False)
+            & Q(category__board__participants=self.request.user)
         )
+
+    def perform_destroy(self, instance):
+        instance.status = Goal.Status.archived
+        instance.save()
+        return instance
 
 
 class GoalCommentCreateView(CreateAPIView):
