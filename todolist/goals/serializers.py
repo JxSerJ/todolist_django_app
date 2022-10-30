@@ -120,7 +120,7 @@ class GoalCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('not allowed in deleted category')
 
         allowed = BoardParticipant.objects.filter(
-            board=value.board_id,
+            board_id=value.board_id,
             role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
             user=self.context["request"].user,
         ).exists()
@@ -157,9 +157,13 @@ class GoalCommentCreateSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created', 'updated', 'user']
 
     def validate_goal(self, value):
-        if value.user != self.context['request'].user:
-            # raise serializers.ValidationError("not owner of goal")
-            raise exceptions.PermissionDenied
+        allowed = BoardParticipant.objects.filter(
+            board_id=value.category.board_id,
+            role__in=[BoardParticipant.Role.owner, BoardParticipant.Role.writer],
+            user=self.context["request"].user,
+        ).exists()
+        if not allowed:
+            raise serializers.ValidationError("must be owner or writer of the goal")
         return value
 
 

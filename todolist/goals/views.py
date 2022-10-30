@@ -9,7 +9,8 @@ from rest_framework.permissions import IsAuthenticated
 
 from goals.filters import GoalDateFilter
 from goals.models import GoalCategory, Goal, GoalComment, Board
-from goals.permissions import IsOwner, BoardPermissions, GoalCategoryPermissions, GoalPermissions
+from goals.permissions import IsOwner, BoardPermissions, GoalCategoryPermissions, GoalPermissions, \
+    GoalCommentPermissions
 from goals.serializers import GoalCategoryCreateSerializer, GoalCategorySerializer, GoalCreateSerializer, \
     GoalSerializer, GoalCommentCreateSerializer, GoalCommentSerializer, BoardCreateSerializer, BoardSerializer, \
     BoardListSerializer
@@ -94,9 +95,10 @@ class GoalCategoryView(RetrieveUpdateDestroyAPIView):
         return GoalCategory.objects.filter(board__participants__user=self.request.user, is_deleted=False)
 
     def perform_destroy(self, instance):
-        instance.is_deleted = True
-        instance.save()
-        Goal.objects.filter(category=instance).update(status=Goal.Status.archived)
+        with transaction.atomic():
+            instance.is_deleted = True
+            instance.save()
+            Goal.objects.filter(category=instance).update(status=Goal.Status.archived)
         return instance
 
 
@@ -119,8 +121,7 @@ class GoalListView(ListAPIView):
 
     def get_queryset(self):
         return Goal.objects.filter(
-            Q(user_id=self.request.user.id) & ~Q(status=Goal.Status.archived) & Q(category__is_deleted=False)
-            & Q(category__board__participants=self.request.user)
+            category__board__participants__user=self.request.user
         )
 
 
@@ -131,8 +132,7 @@ class GoalView(RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Goal.objects.filter(
-            Q(user_id=self.request.user.id) & ~Q(status=Goal.Status.archived) & Q(category__is_deleted=False)
-            & Q(category__board__participants=self.request.user)
+            category__board__participants__user=self.request.user
         )
 
     def perform_destroy(self, instance):
@@ -149,7 +149,7 @@ class GoalCommentCreateView(CreateAPIView):
 
 class GoalCommentListView(ListAPIView):
     model = GoalComment
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, GoalCommentPermissions]
     serializer_class = GoalCommentSerializer
     pagination_class = LimitOffsetPagination
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
@@ -157,7 +157,7 @@ class GoalCommentListView(ListAPIView):
     ordering = ['-created']
 
     def get_queryset(self):
-        return GoalComment.objects.filter(user_id=self.request.user.id)
+        return GoalComment.objects.filter(goal__user=self.request.user)
 
 
 class GoalCommentView(RetrieveUpdateDestroyAPIView):
@@ -166,4 +166,4 @@ class GoalCommentView(RetrieveUpdateDestroyAPIView):
     serializer_class = GoalCommentSerializer
 
     def get_queryset(self):
-        return GoalComment.objects.filter(user_id=self.request.user.id)
+        return GoalComment.objects.filter(goal__user=self.request.user)
