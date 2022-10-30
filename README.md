@@ -7,7 +7,7 @@ ___
 
 - ```Python 3.10.8```
 - ```Django 4.1.2```
-- ```Poetry 1.2.1```
+- ```Poetry 1.2.2```
 - ```Postgresql v15```
 
 ### Functionality:

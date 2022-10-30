@@ -1,13 +1,21 @@
 from django.contrib.auth import authenticate, login, logout
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import status
+from rest_framework.decorators import api_view
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from .models import User
 from .serializers import SignUpSerializer, LoginSerializer, RetrieveUpdateSerializer, PasswordUpdateSerializer
+
+
+# ping view
+@api_view(http_method_names=['GET'])
+def ping(request):
+    return Response(status=status.HTTP_200_OK, data={'status': 'alive'})
 
 
 class SignUpView(CreateAPIView):
