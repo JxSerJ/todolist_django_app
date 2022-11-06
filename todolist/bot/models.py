@@ -1,3 +1,6 @@
+import secrets
+import string
+
 from django.db import models
 
 
@@ -10,3 +13,15 @@ class TgUser(models.Model):
                              null=True,
                              blank=True,
                              default=None)
+    username = models.CharField(
+        verbose_name='tg_username', max_length=256, null=True, blank=True, default=None
+    )
+
+    verification_code = models.CharField(verbose_name='verification code', max_length=16, null=True)
+
+    def generate_verification_code(self):
+        verification_code = ''.join(
+            secrets.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits) for x in range(16)
+        )
+        self.verification_code = verification_code
+

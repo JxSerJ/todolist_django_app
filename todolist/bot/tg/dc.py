@@ -21,7 +21,7 @@ class MessageFrom:
     is_bot: bool
     first_name: str
     last_name: Optional[str]
-    username: str
+    username: Optional[str]
 
     class Meta:
         unknown = EXCLUDE
