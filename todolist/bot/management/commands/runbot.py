@@ -43,6 +43,8 @@ class Command(BaseCommand):
 
         if '/goals' in message.text:
             self.show_goals(message, tg_user)
+        elif '/create' in message.text:
+            self.create_goal(message, tg_user)
         else:
             self.tg_client.send_message(chat_id=message.chat.id, text='Unknown command')
 
@@ -52,8 +54,8 @@ class Command(BaseCommand):
 
         self.tg_client.send_message(
             chat_id=message.chat.id,
-            text=f"You're not verified."
-                 f'Your verification code: {tg_user.verification_code}\n'
+            text=f"You're not verified.\n"
+                 f'Your verification code:   {tg_user.verification_code}\n'
                  f'Enter this code into corresponding field on the http://sprotsenko.ga/'
         )
 
@@ -62,5 +64,9 @@ class Command(BaseCommand):
         if goals.count() == 0:
             self.tg_client.send_message(chat_id=message.chat.id, text='You have no goals here')
         else:
-            response = ['Your goals:\n'] + [f'#{goal.id} {goal.title}' for goal in goals]
+            title_str = 'Your goals:\n'
+            response = '\n'.join([f'#{goal.id} {goal.title}' for goal in goals])
+            self.tg_client.send_message(chat_id=message.chat.id, text=title_str + str(response))
 
+    def create_goal(self, message, tg_user):
+        pass  # todo
