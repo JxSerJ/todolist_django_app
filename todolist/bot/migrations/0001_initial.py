@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('tg_user_id', models.BigIntegerField(unique=True, verbose_name='tg_id')),
                 ('tg_chat_id', models.BigIntegerField(verbose_name='tg_chat_id')),
-                ('user_id', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL, verbose_name='internal user')),
+                ('user', models.ForeignKey(blank=True, default=None, null=True, on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL, verbose_name='internal user')),
             ],
         ),
     ]
