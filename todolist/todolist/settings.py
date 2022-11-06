@@ -36,6 +36,8 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = [env('ALLOWED_HOSTS')]
 
+TG_BOT_TOKEN = env('TG_BOT_TOKEN')
+
 
 # Application definition
 
@@ -51,6 +53,7 @@ INSTALLED_APPS = [
     'django_filters',
     'core',
     'goals',
+    'bot',
 ]
 
 MIDDLEWARE = [
