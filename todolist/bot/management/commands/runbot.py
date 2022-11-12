@@ -202,12 +202,13 @@ class Command(BaseCommand):
             op_buff.sub_operation = SubOperation.category_id_input
             op_buff.valid_input = [str(cat.id) for cat in self.categories]
         else:
-            response = "You have no categories. Create one with /create_category command\n" \
+            response = "You have no categories. Create one with \n/create_category command\n" \
                        "Operation cancelled"
+            self.op_buff = None
             self.tg_client.send_message(chat_id=message.chat.id, text=response)
 
     def _create_category(self, message, tg_user):
-        response = "Category creation not implemented yet :)\n" \
+        response = "Category creation not implemented yet :))\n" \
                    "Operation cancelled"
         self.op_buff = None
         self.tg_client.send_message(chat_id=message.chat.id, text=response)
