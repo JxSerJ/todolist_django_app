@@ -19,6 +19,9 @@ class TgUser(models.Model):
 
     verification_code = models.CharField(verbose_name='verification code', max_length=16, null=True)
 
+    # in_operation = models.BooleanField(verbose_name='in operation', default=False)
+    # operation_buff = models.CharField(verbose_name='operation buffer', null=True, blank=True)
+
     def generate_verification_code(self):
         verification_code = ''.join(
             secrets.choice(string.ascii_lowercase + string.ascii_uppercase + string.digits) for x in range(16)
