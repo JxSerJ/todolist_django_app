@@ -327,3 +327,77 @@ class UpdatePasswordTestCase(TestCase):
         )
         self.user.refresh_from_db(fields=('password',))
         self.assertTrue(self.user.check_password('123qwert#!@!3%'))
+
+
+class ProfileTestCase(TestCase):
+
+    def setUp(self) -> None:
+        self.client = Client()
+        self.url = reverse('profile')
+
+        self.user = User.objects.create_user(
+            username='test_user_name',
+            password='123qwert#!@!3%',
+            email='test@skypro.com',
+            first_name='test_first_name',
+            last_name='test_last_name'
+        )
+
+    def test_logout(self):
+        self.client.force_login(self.user)
+        response = self.client.delete(
+            path=self.url
+        )
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_user_detail(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            path=self.url
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(
+            response.json(),
+            {
+                'id': self.user.id,
+                'username': 'test_user_name',
+                'email': 'test@skypro.com',
+                'first_name': 'test_first_name',
+                'last_name': 'test_last_name',
+            }
+        )
+
+    def test_profile_update(self):
+        self.client.force_login(self.user)
+        response = self.client.patch(
+            path=self.url,
+            data={
+                'username': '_test_user_name',
+                'email': '_test@skypro.com',
+                'first_name': '_test_first_name',
+                'last_name': '_test_last_name',
+            },
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(
+            response.json(),
+            {
+                'id': self.user.id,
+                'username': '_test_user_name',
+                'email': '_test@skypro.com',
+                'first_name': '_test_first_name',
+                'last_name': '_test_last_name',
+            }
+        )
+        self.user.refresh_from_db(fields=('username', 'email', 'first_name', 'last_name'))
+        self.assertDictEqual(
+            response.json(),
+            {
+                'id': self.user.id,
+                'username': self.user.username,
+                'email': self.user.email,
+                'first_name': self.user.first_name,
+                'last_name': self.user.last_name,
+            }
+        )
