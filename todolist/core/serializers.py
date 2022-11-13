@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 
@@ -11,7 +12,9 @@ class SignUpSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(required=False, max_length=150, allow_blank=True)
     last_name = serializers.CharField(required=False, max_length=150, allow_blank=True)
     email = serializers.EmailField(required=False, allow_blank=True)
-    password = serializers.CharField(required=True, max_length=128)
+    password = serializers.CharField(required=True, max_length=128, style={'input_type': 'password'}, write_only=True)
+    password_repeat = serializers.CharField(required=True, max_length=128, style={'input_type': 'password'},
+                                            write_only=True)
 
     def validate_username(self, username):
         """Validate username existence"""
@@ -35,14 +38,18 @@ class SignUpSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create user and write it into database"""
-        user = self.Meta.model.objects.create(**validated_data)
-        user.set_password(user.password)
-        user.save()
-        return user
+        del validated_data['password_repeat']
+        validated_data['password'] = make_password(validated_data['password'])
+        response = super().create(validated_data)
+        return response
+        # user = self.Meta.model.objects.create(**validated_data)
+        # user.set_password(user.password)
+        # user.save()
+        # return user
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'password']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'password', 'password_repeat']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -66,6 +73,7 @@ class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'first_name', 'last_name', 'email', 'password']
+        read_only_fields = ['id', 'first_name', 'last_name', 'email']
 
 
 class RetrieveUpdateSerializer(serializers.ModelSerializer):

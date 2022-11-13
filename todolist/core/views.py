@@ -19,7 +19,6 @@ def ping(request):
 
 
 class SignUpView(CreateAPIView):
-    queryset = User.objects.all()
     serializer_class = SignUpSerializer
 
 
