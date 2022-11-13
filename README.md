@@ -1,12 +1,12 @@
 # Django 4 project
 ___
 **Title:** ToDo List App \
-**Description:** To do list application based on Django 4.1.2.
+**Description:** To do list application based on Django 4.1.3.
 
 ### Main components:
 
-- ```Python 3.10.8```
-- ```Django 4.1.2```
+- ```Python 3.11.0```
+- ```Django 4.1.3```
 - ```Poetry 1.2.2```
 - ```Postgresql v15```
 
@@ -58,8 +58,9 @@ This functionality will be added after project finalization and release.
 
 Credentials for superuser are the following (if you're using project db): 
 
-**Login**: `admin`\
-**Password**: `admin`
+[//]: # (**Login**: `admin`\)
+
+[//]: # (**Password**: `admin`)
 
 
 
