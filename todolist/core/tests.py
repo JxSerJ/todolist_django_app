@@ -212,8 +212,8 @@ class LoginTestCase(TestCase):
 
     def test_invalid_password(self):
         response = self.client.post(
-            reverse('login'),
-            {
+            path=self.url,
+            data={
                 'username': 'test_user_name',
                 'password': '12345678'
             }
@@ -228,8 +228,8 @@ class LoginTestCase(TestCase):
 
     def test_invalid_username(self):
         response = self.client.post(
-            reverse('login'),
-            {
+            path=self.url,
+            data={
                 'username': 'username',
                 'password': '123qwert#!@!3%'
             }
@@ -241,3 +241,89 @@ class LoginTestCase(TestCase):
                 'username': ['User "username" does not exist']
             }
         )
+
+
+class UpdatePasswordTestCase(TestCase):
+
+    def setUp(self) -> None:
+        self.client = Client()
+        self.url = reverse('update_password')
+
+        self.user = User.objects.create_user(
+            username='test_user_name',
+            password='123qwert#!@!3%',
+            email='test@skypro.com',
+            first_name='test_first_name',
+            last_name='test_last_name'
+        )
+
+    def test_password_update_success(self):
+        self.client.force_login(self.user)  # Do not use login(), excessive db querying
+        response = self.client.patch(
+            path=self.url,
+            data={
+                'old_password': '123qwert#!@!3%',
+                'new_password': 'ntk4j3ht98un;',
+            },
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(
+            response.json(),
+            {'status': 'success'}
+        )
+        self.user.refresh_from_db(fields=('password',))
+        self.assertTrue(self.user.check_password('ntk4j3ht98un;'))
+
+    def test_invalid_old_password(self):
+        self.client.force_login(self.user)
+        response = self.client.patch(
+            path=self.url,
+            data={
+                'old_password': '123',
+                'new_password': 'ntk4j3ht98un;',
+            },
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertDictEqual(
+            response.json(),
+            {'old_password': ['Incorrect password']}
+        )
+        self.user.refresh_from_db(fields=('password',))
+        self.assertTrue(self.user.check_password('123qwert#!@!3%'))
+
+    def test_invalid_new_password(self):
+        self.client.force_login(self.user)
+        response = self.client.patch(
+            path=self.url,
+            data={
+                'old_password': '123qwert#!@!3%',
+                'new_password': 'qwerty123',
+            },
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertDictEqual(
+            response.json(),
+            {'new_password': ['This password is too common.']}
+        )
+        self.user.refresh_from_db(fields=('password',))
+        self.assertTrue(self.user.check_password('123qwert#!@!3%'))
+
+    def test_authentication(self):
+        response = self.client.patch(
+            path=self.url,
+            data={
+                'old_password': '123qwert#!@!3%',
+                'new_password': 'ntk4j3ht98un;',
+            },
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertDictEqual(
+            response.json(),
+            {'detail': 'Authentication credentials were not provided.'}
+        )
+        self.user.refresh_from_db(fields=('password',))
+        self.assertTrue(self.user.check_password('123qwert#!@!3%'))

@@ -72,7 +72,6 @@ class PasswordUpdateView(UpdateAPIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response(status=status.HTTP_200_OK, data={'old_password': serializer.data.get('old_password'),
-                                                             'new_password': serializer.data.get('new_password')})
+            return Response(status=status.HTTP_200_OK, data={'status': 'success'})
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
