@@ -349,6 +349,10 @@ class ProfileTestCase(TestCase):
             path=self.url
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        response = self.client.get(
+            path=self.url
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_user_detail(self):
         self.client.force_login(self.user)
