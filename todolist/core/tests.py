@@ -159,3 +159,85 @@ class SignUpTestCase(TestCase):
                 'username': [f'User "{created_user.username}" already exists']
             }
         )
+
+    def test_username_regex_compliance(self):
+        response = self.client.post(
+            path=self.url,
+            data={
+                'username': 'incorrect_user_uname/',
+                'password': '123qwert#!@!3%',
+                'password_repeat': '123qwert#!@!3%'
+            })
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertDictEqual(
+            response.json(),
+            {
+                'username': ['This value does not match the required pattern.'],
+            }
+        )
+
+
+class LoginTestCase(TestCase):
+
+    def setUp(self) -> None:
+        self.client = Client()
+        self.url = reverse('login')
+
+        self.user = User.objects.create_user(
+            username='test_user_name',
+            password='123qwert#!@!3%',
+            email='test@skypro.com',
+            first_name='test_first_name',
+            last_name='test_last_name'
+        )
+
+    def test_login_success(self):
+        response = self.client.post(
+            path=self.url,
+            data={
+                'username': 'test_user_name',
+                'password': '123qwert#!@!3%',
+            })
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertDictEqual(
+            response.json(),
+            {
+                'username': self.user.username,
+                'email': self.user.email,
+                'first_name': self.user.first_name,
+                'last_name': self.user.last_name,
+                'status': 'success'
+            }
+        )
+
+    def test_invalid_password(self):
+        response = self.client.post(
+            reverse('login'),
+            {
+                'username': 'test_user_name',
+                'password': '12345678'
+            }
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertDictEqual(
+            response.json(),
+            {
+                'password': ['Incorrect password']
+            }
+        )
+
+    def test_invalid_username(self):
+        response = self.client.post(
+            reverse('login'),
+            {
+                'username': 'username',
+                'password': '123qwert#!@!3%'
+            }
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertDictEqual(
+            response.json(),
+            {
+                'username': ['User "username" does not exist']
+            }
+        )
