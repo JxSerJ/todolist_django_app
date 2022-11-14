@@ -55,7 +55,7 @@ jobs:
   build_and_push:
     if: |
       (!contains(github.ref_name, 'deploy-only') && !contains(github.ref_name, 'test-only')) || 
-      ((needs.tests == 'success' || needs.tests == 'skipped') && 
+      ((needs.tests.result == 'success' || needs.tests.result == 'skipped') && 
       (!contains(github.ref_name, 'deploy-only') && !contains(github.ref_name, 'test-only')))
     name: Build and push
     needs: tests
@@ -99,9 +99,17 @@ jobs:
     name: Deploy
     needs: [build_and_push, tests]
     if: |
-      always() && !contains(github.ref_name, 'test-only') &&
-        ((needs.build_and_push.result == 'success' && (needs.tests == 'success' || needs.tests == 'skipped')) ||
-        (needs.build_and_push.result == 'skipped' && contains(github.ref_name, 'deploy-only') && needs.tests == 'skipped'))
+      always() && !contains(github.ref_name, 'test-only') || (
+        (
+          needs.build_and_push.result == 'success' && 
+          (needs.tests.result == 'success' || needs.tests.result == 'skipped')
+        ) || 
+        (
+          needs.build_and_push.result == 'skipped' && 
+          contains(github.ref_name, 'deploy-only') && 
+          needs.tests.result == 'skipped'
+        )
+      )
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
       API_NAME: ${{ secrets.API_NAME }}
