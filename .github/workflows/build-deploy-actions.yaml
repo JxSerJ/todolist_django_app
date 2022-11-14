@@ -10,7 +10,7 @@ jobs:
     if: |
       contains(github.ref_name, 'test') ||
       (!contains(github.ref_name, 'deploy-only') && contains(github.ref_name, 'test')) ||
-      !contains(github.ref_name, 'deploy-only'
+      !contains(github.ref_name, 'deploy-only')
     name: Test
     runs-on: ubuntu-22.04
     strategy:
