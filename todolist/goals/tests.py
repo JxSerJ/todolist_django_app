@@ -150,3 +150,6 @@ class OneGoalTestCase(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Goal.objects.first().status, Goal.Status.archived)
+
+    def test_failure(self):
+        self.assertTrue(False, 'failure')
