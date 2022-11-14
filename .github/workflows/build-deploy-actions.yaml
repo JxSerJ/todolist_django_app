@@ -99,7 +99,7 @@ jobs:
     name: Deploy
     needs: [build_and_push, tests]
     if: |
-      always() && !contains(github.ref_name, 'test-only') || (
+      !contains(github.ref_name, 'test-only') || (
         (
           needs.build_and_push.result == 'success' && 
           (needs.tests.result == 'success' || needs.tests.result == 'skipped')
