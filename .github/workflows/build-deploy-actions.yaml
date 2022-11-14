@@ -51,8 +51,11 @@ jobs:
           python manage.py test -v 2
 
   build_and_push:
-    if: "!contains(github.ref_name, 'deploy-only') && !contains(github.ref_name, 'test-only')"
+    if: |
+      !contains(github.ref_name, 'deploy-only') && !contains(github.ref_name, 'test-only') && 
+      (needs.tests == 'success' || needs.tests == 'success')
     name: Build and push
+    needs: tests
     runs-on: main-linux
 
     steps:
@@ -91,7 +94,7 @@ jobs:
   deploy:
     runs-on: main-linux
     name: Deploy
-    needs: build_and_push
+    needs: [build_and_push, tests]
     if: |
       always() && contains(github.ref_name, 'test-only') &&
         ((needs.build_and_push.result == 'success' && needs.tests == 'success') ||
