@@ -46,6 +46,7 @@ jobs:
           if [ -f ./todolist/requirements.txt ]; then pip install -r ./todolist/requirements.txt; fi
 
       - name: Run tests
+        run: |
           cd ./todolist
           python manage.py test -v 2
 
