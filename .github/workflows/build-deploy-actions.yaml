@@ -21,9 +21,11 @@ jobs:
       postgres:
         image: postgres:15
         env:
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
+          POSTGRES_NAME: postgres
         options: >-
-          --health-cmd pg_isready
+          --health-cmd pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_NAME}
           --health-interval 5s
           --health-timeout 5s
           --health-retries 5
@@ -52,8 +54,9 @@ jobs:
 
   build_and_push:
     if: |
-      !contains(github.ref_name, 'deploy-only') && !contains(github.ref_name, 'test-only') && 
-      (needs.tests == 'success' || needs.tests == 'success')
+      (!contains(github.ref_name, 'deploy-only') && !contains(github.ref_name, 'test-only')) || 
+      ((needs.tests == 'success' || needs.tests == 'skipped') && 
+      (!contains(github.ref_name, 'deploy-only') && !contains(github.ref_name, 'test-only')))
     name: Build and push
     needs: tests
     runs-on: main-linux
@@ -96,8 +99,8 @@ jobs:
     name: Deploy
     needs: [build_and_push, tests]
     if: |
-      always() && contains(github.ref_name, 'test-only') &&
-        ((needs.build_and_push.result == 'success' && needs.tests == 'success') ||
+      always() && !contains(github.ref_name, 'test-only') &&
+        ((needs.build_and_push.result == 'success' && (needs.tests == 'success' || needs.tests == 'skipped')) ||
         (needs.build_and_push.result == 'skipped' && contains(github.ref_name, 'deploy-only') && needs.tests == 'skipped'))
     env:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
