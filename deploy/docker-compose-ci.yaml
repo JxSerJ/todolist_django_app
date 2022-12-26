@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   db:
-    image: postgres:latest
+    image: postgres:15
     volumes:
       - ./database/postgres_data:/var/lib/postgresql/data
     environment:
